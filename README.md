@@ -1,0 +1,5 @@
+Creating a Python AWS Lambda layer for scikit-learn
+Skit-learn is a very popular python machine learning library. It is used for ML operations like training, testing, inference and more. We wanted to use it as part of an AWS Lambda function. It is not a part of the basic python packages, and unlike the pandas library - there is no AWS provided lambda layer for it.
+We found it hard to create the missing layer we needed. We decided to document the process to help others creating and updating scikit-learn based layers, or any other custom AWS lambda layers.
+We used a python script and a Dockerfile to create an artifact with the required dependencies. We used the base lambda image from the public AWS docker registry, and installed dependencies according to the lambda’s runtime platform. Lastly, we deleted unnecessary resources to make the layer size as small as possible.
+Read more to learn about the process. We included code snippets so you will be able to implement a similar process by yourself.
