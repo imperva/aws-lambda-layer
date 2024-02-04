@@ -1,19 +1,18 @@
-import os
 import pytest
 
-from create_layer import get_layer_folder, run
+from create_layer import run
 
 
-def test_get_layers_folder():
-    assert get_layer_folder("sklearn").endswith(os.path.join("layers", "sklearn"))
-    assert os.path.exists(get_layer_folder("sklearn"))
+def test_create_xgboost_arm_layer():
+    run(["-l", "xgboost", "-r", "3.11", "-a", "arm64"])
 
 
-def test_create_layer():
-    run(["-l", "sklearn"])
+@pytest.mark.parametrize("layer", ["xgboost"])
+def test_create_layer_python3_12(layer: str):
+    run(["-l", layer, "-r", "3.12"])
 
 
 @pytest.mark.parametrize("bucket", ["test-bucket"])
 @pytest.mark.skip
-def test_full_flow(bucket: str):
-    run(["-l", "sklearn", "-p", "true", "-b", bucket])
+def test_publish(bucket: str):
+    run(["-l", "sklearn", "-s", "true", "-p", "true", "-b", bucket])
