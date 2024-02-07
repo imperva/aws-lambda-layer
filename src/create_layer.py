@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 import zipfile
+from collections import Counter
 from logging.config import fileConfig
 from pathlib import Path
 from time import sleep
@@ -93,7 +94,7 @@ def _analyze_layer_file(layer_file: str, top_n: int):
 
 def _log_dict(item_type: str, items: Dict, top_n: int):
     result = f"\n========== Top {top_n} {item_type} =========="
-    for ext, size in sorted(items.items(), key=lambda x: x[1], reverse=True)[:min(top_n, len(items))]:
+    for ext, size in Counter(items).most_common(top_n):
         if size > 0:
             result += f"\n{ext}, {_format_size(size)}"
     logging.info(result)
