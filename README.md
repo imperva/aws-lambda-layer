@@ -1,8 +1,8 @@
 
 # Creating a Python AWS Lambda layer for scikit-learn, xgboost or any other custom layer
-Scikit-learn is a very popular python machine learning library. It is used for ML operations like training, testing, inference and more. We wanted to use it as part of an AWS Lambda function. The problem is that it is not a part of the basic python packages, and unlike the pandas library - there is no AWS provided lambda layer for it.
+Scikit-learn is a very popular python library for machine learning. It is used for ML operations like training, testing, inference and more. We wanted to use scikit-learn as a part of an AWS Lambda function. Having such capability helped us to bring AWS Lambda advantages to ML based operations. As an example we can perform inference without having to hold an instance behind it. Another example is running multiple clustering experiments with up to 10GB or memory without having to maintain any resources.
 
-Compatability issues and size constraints make the process of creating such a layer complex. We decided to document the process to help others creating and updating scikit-learn based layers, or any other custom AWS lambda layers like the xgboost layer, which is also included in this repo.
+The problem is that it is not a part of the basic python packages, and unlike the pandas library - there is no AWS provided lambda layer for it. Compatability issues and size constraints make the process of creating such a layer complex. We decided to document the process to help others creating and updating scikit-learn based layers, or any other custom AWS lambda layers like the xgboost layer, which is also included in this repo.
 
 To use the python script you need python and docker installed. To create a sckit-learn layer all use the command line interface:
 
