@@ -6,7 +6,8 @@ We wanted to use scikit-learn as a part of an AWS Lambda function, which would h
 
 The problem with scikit-learn is that it is not a part of the basic Python packages, and unlike the pandas library, there is no AWS-provided lambda layer for it. Compatability issues and size constraints make the process of creating such a layer complex. We decided to document the process to help others create and update scikit-learn based layers, or any other custom AWS lambda layers like the xgboost layer, which is also included in this repo.
 
-To use the Python script you need Python and docker installed. To create a sckit-learn layer, use the command line interface:
+To use the Python script you need Python and docker installed. To create a sckit-learn layer, make sure Docker is up and running and use 
+the command line interface:
 
 ```python src/create_layer.py -l sklearn```
 
@@ -16,7 +17,7 @@ Create a scikit-learn layer for arm64 architecture:
 
 The process is not clean from errors. You have to choose the right runtime and platform, and in some cases you must define library versions. In addition, deleting files from the zipped resources file can break your lambda function at runtime. You can use the command line interface to publish the layer and test it:
 
-```python src/create_layer.py -l sklearn -p true -bucket your-s3-bucket```
+```python src/create_layer.py -l sklearn -p true --bucket="your-s3-bucket"```
 
 To view all command line interface options use the help option:
 
