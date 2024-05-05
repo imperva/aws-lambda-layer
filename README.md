@@ -28,6 +28,13 @@ Use this repo to create your own scikit-learn layer, xgboost layer or any other 
 To use the layer, create or use an existing lambda functions. In the layers menu, add a new layer and choose the layer you created.
 When setting up the lambda function, please note that sklearn usually runs a bit longer and requires more memory than the default lambda, so adjust accordingly.
 
+## Layers List
+Here is the list of layer configurations we created and tested. You can use the configuration to create a layer and upload it to your account with the version and architecture configuration you use:
+
+- sklearn
+- xgboost
+- jinja
+
 ## Layer creation 
 We used the base Python image according to our lambda runtime - using the same Python runtime and pip installer saved us from compatibility errors in later stages. You can browse the available tags here: https://gallery.ecr.aws/lambda/python
 
