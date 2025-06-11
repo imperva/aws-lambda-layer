@@ -142,7 +142,7 @@ def _publish_layer(layer_name: str, layer_file: str, python_runtime: str, archit
 def run(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--layer", required=True, help="Layer name")
-    parser.add_argument("-r", "--runtime", required=False, default="3.12", help="Python runtime")
+    parser.add_argument("-r", "--runtime", required=False, default="3.13", help="Python runtime")
     parser.add_argument("-a", "--architecture", required=False, default="x86_64", help="x86_64 or arm64")
     parser.add_argument("-s", "--skip", required=False, default="false",
                         help="Skip layer creation if layer already exists")
@@ -150,7 +150,7 @@ def run(argv):
                         help="Top item count in layer analysis. By default top 10 items are shown")
     parser.add_argument("-p", "--publish", required=False, default="false",
                         help="Publish lambda layer")
-    parser.add_argument("-b", "--bucket", required=False,
+    parser.add_argument("-b", "-- bucket", required=False,
                         help="S3 bucket to use, required for the publishing process")
     args = parser.parse_args(args=argv)
 
