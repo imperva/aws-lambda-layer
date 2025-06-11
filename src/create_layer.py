@@ -142,7 +142,7 @@ def _publish_layer(layer_name: str, layer_file: str, python_runtime: str, archit
 def run(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--layer", required=True, help="Layer name")
-    parser.add_argument("-r", "--runtime", required=False, default="3.12", help="Python runtime")
+    parser.add_argument("-r", "--runtime", required=False, default="3.13", help="Python runtime")
     parser.add_argument("-a", "--architecture", required=False, default="x86_64", help="x86_64 or arm64")
     parser.add_argument("-s", "--skip", required=False, default="false",
                         help="Skip layer creation if layer already exists")
