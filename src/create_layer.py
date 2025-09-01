@@ -36,9 +36,15 @@ def _build_layer(layer_name: str, lambda_base_image: str, architecture: str, ski
             return full_layer_file
         else:
             os.remove(full_layer_file)
-    layer_folder = os.path.join(_get_folder("layers"), layer_name)
+    layer_folder = _get_layer_folder(layer_name)
     logging.info(f"Source files for layer found under: {layer_folder}. Going to build layer file: {layer_file}")
-    client = docker.from_env()
+    try:
+        client = docker.from_env()
+    except docker.errors.DockerException as e:
+        logging.error(f"Failed to initialize Docker client: {e}")
+        client = None
+        exit(2)
+
     img, output = client.images.build(path=layer_folder, rm=True,
                                       dockerfile=os.path.join(os.path.dirname(__file__), "create_layer.Dockerfile"),
                                       quiet=False, nocache=False,
@@ -56,6 +62,10 @@ def _build_layer(layer_name: str, lambda_base_image: str, architecture: str, ski
         img.remove()
     logging.info(f"Layer size: {_format_size(os.path.getsize(full_layer_file))}")
     return full_layer_file
+
+
+def _get_layer_folder(layer_name: str) -> str:
+    return os.path.join(_get_folder("layers"), layer_name)
 
 
 def _get_platform(architecture: str):
@@ -150,9 +160,13 @@ def run(argv):
                         help="Top item count in layer analysis. By default top 10 items are shown")
     parser.add_argument("-p", "--publish", required=False, default="false",
                         help="Publish lambda layer")
-    parser.add_argument("-b", "-- bucket", required=False,
+    parser.add_argument("-b", "--bucket", required=False,
                         help="S3 bucket to use, required for the publishing process")
     args = parser.parse_args(args=argv)
+
+    if not os.path.exists(_get_layer_folder(args.layer)):
+        logging.error(f"Layer folder does not exist: {args.layer}")
+        exit(2)
 
     layer_file = _build_layer(args.layer, args.runtime, args.architecture,
                               args.skip.lower() == "true")
