@@ -52,13 +52,13 @@ python src/create_layer.py -h
 
 ## Supported Layers
 
-| Layer | Description |
-|-------|-------------|
-| `sklearn` | scikit-learn for machine learning |
-| `xgboost` | XGBoost gradient boosting |
-| `jinja` | Jinja2 templating engine |
-| `sqlite_utils` | SQLite utilities |
-| `fastparquet` | Fast Parquet file reading/writing |
+| Layer | Description | Size (Python 3.13, x86_64) |
+|-------|-------------|--------------------------|
+| `sklearn` | scikit-learn for machine learning | 61.18 MiB |
+| `xgboost` | XGBoost gradient boosting | 48.15 MiB |
+| `jinja` | Jinja2 templating engine | 157.94 KiB |
+| `sqlite_utils` | SQLite utilities | 2.24 MiB |
+| `fastparquet` | Fast Parquet file reading/writing | 27.01 MiB |
 
 ## How It Works
 
