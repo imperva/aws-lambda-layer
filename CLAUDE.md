@@ -27,7 +27,7 @@ This is a Python tool that automates creation and publication of AWS Lambda laye
 
 3. **Layer Configurations** (`layers/{name}/`)
    - Each layer has: `requirements.txt` and `cleanup.sh`
-   - Currently supported: sklearn, xgboost, jinja, sqlite_utils
+   - Currently supported: sklearn, xgboost, jinja, sqlite_utils, fastparquet
    - Extensible for new layers
 
 4. **Tests** (`test/`)

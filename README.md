@@ -58,6 +58,7 @@ python src/create_layer.py -h
 | `xgboost` | XGBoost gradient boosting |
 | `jinja` | Jinja2 templating engine |
 | `sqlite_utils` | SQLite utilities |
+| `fastparquet` | Fast Parquet file reading/writing |
 
 ## How It Works
 
