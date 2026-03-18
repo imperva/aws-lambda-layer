@@ -1,0 +1,43 @@
+# Contributing guidelines
+
+We welcome contributions from everyone. To become a contributor, follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Make your changes.
+4. Submit a pull request.
+
+### Contributing code
+
+When contributing code, please ensure that you follow our coding standards and guidelines. This helps maintain the quality and consistency of the codebase.
+
+## Pull Request Checklist
+
+Before submitting a pull request, please ensure that you have completed the following:
+
+- [ ] Followed the coding style guidelines.
+- [ ] Written tests for your changes.
+- [ ] Run all tests and ensured they pass.
+- [ ] Updated documentation if necessary.
+
+### License
+
+By contributing to this project, you agree that your contributions will be licensed under the project's open-source license.
+
+### Coding style
+
+### Testing
+
+All contributions must be accompanied by tests to ensure that the code works as expected and does not introduce regressions.
+
+#### Running unit tests
+To create a virtual environment, use the following command:
+```sh
+python -m venv venv && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt --upgrade && pip install -r test/test.requirements.txt --upgrade
+```
+
+To run all the unit tests locally, use the following command:
+```sh
+PYTHONPATH=src:test python -m pytest --color=yes test/*_unit.py
+```
+Unit tests also run automatically on every push using a dedicated workflow.

@@ -1,57 +1,127 @@
 
-# Creating a Python AWS Lambda layer for scikit-learn, xgboost or any other custom layer
-Scikit-learn is a very popular Python library for machine learning, used for ML operations like training, testing, inference and more. 
+# AWS Lambda Layer Builder
 
-We wanted to use scikit-learn as a part of an AWS Lambda function, which would help us to bring AWS Lambda advantages to ML-based operations. For example, this library would allow us to perform inference without having to hold an instance behind it, or to run multiple clustering experiments with up to 10GB of memory without having to maintain any resources.
+A Python tool to create and publish AWS Lambda layers for Python packages (scikit-learn, xgboost, jinja, sqlite_utils, or custom libraries).
 
-The problem with scikit-learn is that it is not a part of the basic Python packages, and unlike the pandas library, there is no AWS-provided lambda layer for it. Compatability issues and size constraints make the process of creating such a layer complex. We decided to document the process to help others create and update scikit-learn based layers, or any other custom AWS lambda layers like the xgboost layer, which is also included in this repo.
+## Problem Statement
 
-To use the Python script you need Python and docker installed. To create a sckit-learn layer, make sure Docker is up and running and use 
-the command line interface:
+Popular Python libraries like scikit-learn are not included in the basic AWS Lambda runtime. Unlike pandas, there’s no official AWS-provided Lambda layer for these packages. Compatibility issues and size constraints make creating such layers complex and error-prone.
 
-```python src/create_layer.py -l sklearn```
+This tool automates the process and helps you:
+- Build Lambda-compatible layer packages using Docker
+- Support multiple architectures (x86_64, arm64) and Python runtimes
+- Analyze layer size and optimize by removing unnecessary files
+- Publish layers directly to AWS Lambda
 
-Create a scikit-learn layer for arm64 architecture:
+## Quick Start
 
-```python src/create_layer.py -l sklearn -a arm64```
+### Prerequisites
+- Python 3.8+
+- Docker (running)
+- AWS credentials (for publishing layers)
 
-The process is not clean from errors. You have to choose the right runtime and platform, and in some cases you must define library versions. In addition, deleting files from the zipped resources file can break your lambda function at runtime. You can use the command line interface to publish the layer and test it:
+### Create a Layer
 
-```python src/create_layer.py -l sklearn -p true --bucket="your-s3-bucket"```
+Create a scikit-learn layer for x86_64 (default):
+```bash
+python src/create_layer.py -l sklearn
+```
 
-To view all command line interface options use the help option:
+Create a layer for arm64 architecture:
+```bash
+python src/create_layer.py -l sklearn -a arm64
+```
 
-```python src/create_layer.py -h```
+Create a layer with Python 3.11:
+```bash
+python src/create_layer.py -l sklearn -r 3.11
+```
 
-Use this repo to create your own scikit-learn layer, xgboost layer or any other custom layer you need. It is also possible to contribute and add configurations for other useful layers.
+### Build and Publish
 
-To use the layer, create or use an existing lambda functions. In the layers menu, add a new layer and choose the layer you created.
-When setting up the lambda function, please note that sklearn usually runs a bit longer and requires more memory than the default lambda, so adjust accordingly.
+Build and publish to AWS Lambda:
+```bash
+python src/create_layer.py -l sklearn -p true --bucket="your-s3-bucket"
+```
 
-## Layers List
-Here is the list of layer configurations we created and tested. You can use the configuration to create a layer and upload it to your account with the version and architecture configuration you use:
+### View All Options
 
-- sklearn
-- xgboost
-- jinja
+```bash
+python src/create_layer.py -h
+```
 
-## Layer creation 
-We used the base Python image according to our lambda runtime - using the same Python runtime and pip installer saved us from compatibility errors in later stages. You can browse the available tags here: https://gallery.ecr.aws/lambda/python
+## Supported Layers
 
-In the requirements installation we used the platform directive to install the chosen platform’s artifacts. See the available downloads for scikit-learn here: https://pypi.org/project/scikit-learn/#files
+| Layer | Description |
+|-------|-------------|
+| `sklearn` | scikit-learn for machine learning |
+| `xgboost` | XGBoost gradient boosting |
+| `jinja` | Jinja2 templating engine |
+| `sqlite_utils` | SQLite utilities |
 
-We used the only-binary directive to avoid adding source files since we want to keep the layer small.
+## How It Works
 
-We used a multi-stage build to have the tools for updating the resources we installed. In the second stage of the build we deleted data from the installed resources and zipped the resources to a layer zip file.
+### Layer Creation Process
 
-The command line interface allows you to choose a layer and run its creation process. It also analyzes and lists the largest files, largest folders, and largest size according to file types. This information is useful for removing unnecessary resources from the layer.
+1. **Docker Build**: Uses official AWS Lambda Python base images to ensure compatibility
+   - Downloads and installs packages in Lambda environment
+   - Supports both x86_64 and arm64 architectures via manylinux2014 platform tags
 
+2. **Size Optimization**: Multi-stage Docker build to clean unnecessary files
+   - Removes docs, tests, cache files
+   - Keeps only binary artifacts needed at runtime
 
-## Layer configuration
-A layer configuration consists of two files:
-1. requirement.txt - defines the Python requirements needed for the layer
-2. cleanup.sh - a script for cleaning up the image from unnecessary resources
+3. **Analysis**: Reports layer statistics
+   - Total size
+   - Top 10 largest directories, files, and file types
+   - Helps identify optimization opportunities
 
-As an example you can look at the scikit-learn layer configuration: https://github.com/imperva/aws-lambda-layer/tree/main/layers/sklearn.
-You can add your own layer by creating a new layer folder with the layer configuration files described.
+4. **Publishing** (optional):
+   - Uploads to S3 bucket
+   - Creates AWS Lambda layer version
+   - Cleans up temporary S3 objects
+
+### Configuration Files
+
+Each layer requires:
+1. **requirements.txt** - Python package dependencies
+2. **cleanup.sh** - Script to remove unnecessary files from the layer
+
+Example: `layers/sklearn/`
+- `requirements.txt` - scikit-learn and dependencies
+- `cleanup.sh` - Removes test files, documentation, etc.
+- `Dockerfile` - Built from template at `src/create_layer.Dockerfile`
+
+## Using a Layer
+
+After publishing a layer to AWS Lambda:
+
+1. Go to AWS Lambda console → Layers
+2. Find your published layer (named like `sklearn_3_13_x86_64`)
+3. When creating/editing a Lambda function, attach the layer
+4. The packages will be available in your Lambda function
+
+**Note**: Heavyweight packages like scikit-learn require more memory and runtime. Adjust Lambda configuration accordingly (e.g., 512-1024 MB memory).
+
+## Contributing
+
+We welcome contributions! To add support for a new package:
+
+1. Create a new folder in `layers/{package_name}/`
+2. Add `requirements.txt` and `cleanup.sh`
+3. Test locally with `create_layer.py -l {package_name}`
+4. Submit a pull request
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## Architecture & Technical Details
+
+- **Python Runtime Matching**: Uses same Python version as target Lambda for compatibility
+- **Multi-Architecture**: Builds for x86_64 and arm64 using platform-specific wheel files
+- **Binary-Only**: Uses `--only-binary` flag to avoid source code, keeping layer size minimal
+- **Docker Multi-Stage**: First stage builds, second stage optimizes and packages
+
+## License
+
+See [LICENSE.md](LICENSE.md)
 

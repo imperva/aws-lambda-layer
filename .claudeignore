@@ -1,0 +1,12 @@
+do-not-commit/
+.venv/
+venv/
+env/
+dist/
+build/
+__pycache__/
+*.pyc
+.git/
+.DS_Store
+.env
+.env.local

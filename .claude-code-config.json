@@ -1,0 +1,7 @@
+{
+  "docs": ["CONTRIBUTING.md"],
+  "commands": {
+    "setupVenv": "python -m venv venv && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt --upgrade && pip install -r test/test.requirements.txt --upgrade",
+    "unitTests": "PYTHONPATH=src:test python -m pytest --color=yes test/*_unit.py"
+  }
+}

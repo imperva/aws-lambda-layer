@@ -1,19 +1,41 @@
-name: Run Unit Tests
+name: Run Tests
 on: [push, workflow_dispatch]
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Update Python
-        uses: actions/setup-python@v3
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.12'
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'test/test.requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Create virtual environment
+        run: python -m venv .venv
+
       - name: Install dependencies
         run: |
+          source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Run tests
+          pip install -r test/test.requirements.txt
+
+      - name: Run unit tests
+        timeout-minutes: 2
         run: |
-          PYTHONPATH=src pytest test/create_layer_unit_test.py
+          source .venv/bin/activate
+          PYTHONPATH=src:test python -m pytest --color=yes test/*_unit.py
